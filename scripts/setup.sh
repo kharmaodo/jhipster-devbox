@@ -3,6 +3,10 @@
 # switch to French keyboard layout
 sudo sed -i 's/"us"/"fr"/g' /etc/default/keyboard
 
+sudo setxkbmap fr
+
+sudo loadkeys fr
+
 sudo install-keymap fr
 
 # update the system
