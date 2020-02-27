@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# switch to French keyboard layout
+sudo sed -i 's/"us"/"fr"/g' /etc/default/keyboard
+
+sudo install-keymap fr
+
 # update the system
 export DEBIAN_FRONTEND=noninteractive
 apt-mark hold keyboard-configuration
@@ -39,11 +44,8 @@ su -c "yarn config set prefix /home/vagrant/.yarn-global" vagrant
 #echo 'LC_ALL=en_US.UTF-8' >> /etc/environment
 #echo 'LC_CTYPE=en_US.UTF-8' >> /etc/environment
 
-
-echo 'LANG=fr_FR.UTF-8' >> /etc/environment
-echo 'LANGUAGE=fr_FR.UTF-8' >> /etc/environment
-echo 'LC_ALL=fr_FR.UTF-8' >> /etc/environment
-echo 'LC_CTYPE=fr_FR.UTF-8' >> /etc/environment
+# set to UTF8 locale for later powerline 
+sudo update-locale LANG=en_US.uft8 LC_ALL=en_US.utf8
 
 # run GUI as non-privileged user
 echo 'allowed_users=anybody' > /etc/X11/Xwrapper.config
