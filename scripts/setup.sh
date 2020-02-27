@@ -200,30 +200,50 @@ PREFS
 
 echo "Install  SDK for JVM microservice like quarkus,micronaut,thorntail"
 echo "Install  Nginx "
-# nginx
-sudo apt-get -y install nginx
-sudo service nginx start
+echo "Pull latest Nginx"
+sudo docker pull nginx
+echo "......;"
 
-# set up nginx server
-sudo cp /vagrant/.provision/nginx/nginx.conf /etc/nginx/sites-available/site.conf
-sudo chmod 644 /etc/nginx/sites-available/site.conf
-sudo ln -s /etc/nginx/sites-available/site.conf /etc/nginx/sites-enabled/site.conf
-sudo service nginx restart
+echo "Redirection of 8080 to 80 latest Nginx"
+sudo docker run –p 8080:80 –d nginx
+echo "......;"
 
-# clean /var/www
-sudo rm -Rf /var/www
 
-# symlink /var/www => /vagrant
-ln -s /vagrant /var/www
 echo "Install  Sonar"
 echo "Install  CouchDB"
+
+echo "deb https://apache.bintray.com/couchdb-deb bionic main" | sudo tee -a /etc/apt/sources.list
+
+
+
+curl -L https://couchdb.apache.org/repo/bintray-pubkey.asc | sudo apt-key add -
+sudo apt-get update -y && sudo apt-get install couchdb -y 
+
+sudo systemctl start couchdb
+sudo systemctl enable couchdb
+
+sudo systemctl status couchdb
+
+
+echo "... end of installing couchDB"
 echo "Install  Eureka"
 
 
 echo "Install  Elasticsearch"
 echo "Install  Logstash"
 echo "Install  Kibana"
+
 echo "Install  Kafka"
+wget http://www-us.apache.org/dist/kafka/2.2.1/kafka_2.12-2.2.1.tgz
+sudo tar xzf kafka_2.12-2.2.1.tgz
+sudo mv kafka_2.12-2.2.1 /usr/local/kafka
+
+cd /usr/local/kafka
+sh bin/zookeeper-server-start.sh config/zookeeper.properties &
+
+
+echo "... end of kafka"
+
 
 
 
@@ -238,7 +258,17 @@ echo "Install  Prometheus"
 echo "Install  Gitlab"
 echo "Install  Graphana"	
 
+echo "Install Solr"
+cd /opt
+wget https://archive.apache.org/dist/lucene/solr/8.3.1/solr-8.3.1.tgz && tar xzf solr-8.3.1.tgz solr-8.3.1/bin/install_solr_service.sh --strip-components=2
 
+sudo bash ./install_solr_service.sh solr-8.3.1.tgz
+
+sudo service solr stop
+sudo service solr start
+sudo service solr status
+
+echo ".... end  of installing Solr"
 
 
 
