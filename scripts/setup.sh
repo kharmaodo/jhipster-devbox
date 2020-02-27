@@ -3,11 +3,9 @@
 # switch to French keyboard layout
 sudo sed -i 's/"us"/"fr"/g' /etc/default/keyboard
 
-sudo setxkbmap fr
+# sudo setxkbmap fr
 
 sudo loadkeys fr
-
-sudo install-keymap fr
 
 # update the system
 export DEBIAN_FRONTEND=noninteractive
@@ -146,6 +144,58 @@ apt-get -y autoremove
 dd if=/dev/zero of=/EMPTY bs=1M > /dev/null 2>&1
 rm -f /EMPTY
 
+# install Eclipse Kepler 4.3.1 Java EE 
+echo "Install  Eclipse"
+
+if [ ! -d /vagrant/resources ]
+then
+  mkdir -p /vagrant/resources
+fi
+
+
+if [ ! -f /vagrant/resources/eclipse-jee-2019-12-R-linux-gtk-x86_64.tar.gz ]
+then
+  cd /vagrant/resources
+  pwd 
+  echo Downloading Eclipse...
+   wget -q https://eclipse.bluemix.net/packages/2019-12/data/eclipse-jee-2019-12-R-linux-gtk-x86_64.tar.gz
+  cd /home/vagrant
+fi
+
+
+sudo tar xzf /vagrant/resources/eclipse-jee-2019-12-R-linux-gtk-x86_64.tar.gz -C /opt --owner=root
+
+cat <<DESKTOP | sudo tee /usr/share/applications/eclipse.desktop
+[Desktop Entry]
+Version=4.3.1
+Name=Eclipse for Java EE Developers
+Comment=IDE for all seasons
+Exec=env UBUNTU_MENUPROXY=0 /opt/eclipse/eclipse
+Icon=/opt/eclipse/icon.xpm
+Terminal=false
+Type=Application
+Categories=Utility;Application;Development;IDE
+DESKTOP
+
+
+mkdir -p /home/vagrant/workspace
+chown -R vagrant:vagrant /home/vagrant/workspace
+
+if [ ! -f mkdir -p /home/vagrant/.eclipse/org.eclipse.platform_4.3.0_1473617060_linux_gtk_x86_64/configuration/.settings/ ]
+then
+
+	mkdir -p /home/vagrant/.eclipse/org.eclipse.platform_4.3.0_1473617060_linux_gtk_x86_64/configuration/.settings/
+fi	
+
+chown -R vagrant:vagrant  /home/vagrant/.eclipse/org.eclipse.platform_4.3.0_1473617060_linux_gtk_x86_64/configuration/.settings/
+chown -R vagrant:vagrant  /home/vagrant/.eclipse/org.eclipse.platform_4.3.0_1473617060_linux_gtk_x86_64/configuration/.settings/org.eclipse.ui.ide.prefs
+cat <<PREFS | tee /home/vagrant/.eclipse/org.eclipse.platform_4.3.0_1473617060_linux_gtk_x86_64/configuration/.settings/org.eclipse.ui.ide.prefs 
+MAX_RECENT_WORKSPACES=5
+RECENT_WORKSPACES=/home/vagrant/workspace
+RECENT_WORKSPACES_PROTOCOL=3
+SHOW_WORKSPACE_SELECTION_DIALOG=false
+eclipse.preferences.version=1
+PREFS
 
 
 echo "Install  SDK for JVM microservice like quarkus,micronaut,thorntail"
@@ -172,7 +222,7 @@ echo "Install  Graphana"
 echo "Install  Wildfly"
 echo "Install  Prometheus"
 echo "Install  Gitlab"
-echo "Install  Graphana"
+echo "Install  Graphana"	
 
 
 
