@@ -249,7 +249,30 @@ echo "... end of kafka"
 
 
 echo "Install  RabbitMQ"
+
 echo "Install  ActiveMQ"
+
+cd /opt
+wget http://archive.apache.org/dist/activemq/5.15.8/apache-activemq-5.15.8-bin.tar.gz
+tar -xvzf apache-activemq-5.15.8-bin.tar.gz
+sudo mv apache-activemq-5.15.8 /opt/activemq
+sudo addgroup --quiet --system activemq
+sudo adduser --quiet --system --ingroup activemq --no-create-home --disabled-password activemq
+sudocchown -R activemq:activemq /opt/activemq
+sudo cp activemq.service /etc/systemd/system/activemq.service
+sudo systemctl daemon-reload
+sudo systemctl start activemq
+sudo systemctl enable activemq
+
+sh /opt/activemq/bin/activemq status
+
+sudo systemctl restart activemq
+ps aux | grep activemq
+
+netstat -naptu | grep 61616
+
+echo "To be done for Monitor ActiveMQ With Hawt.io"
+
 echo "Install  Gitlab"
 echo "Install  Graphana"
 
