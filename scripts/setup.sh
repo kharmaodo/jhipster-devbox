@@ -12,9 +12,10 @@ apt-mark unhold keyboard-configuration
 ################################################################################
 
 # install utilities
-apt-get -y install vim git zip bzip2 fontconfig curl language-pack-en
+#apt-get -y install vim git zip bzip2 fontconfig curl language-pack-en
 
-# install Java 11
+apt-get -y install vim git zip bzip2 fontconfig curl  language-pack-fr
+# install Java 11 and another old versions
 apt-get -y install openjdk-11-jdk
 
 # install Node.js
@@ -28,24 +29,21 @@ npm install -g npm
 npm install -g yarn
 su -c "yarn config set prefix /home/vagrant/.yarn-global" vagrant
 
-# install Yeoman
-npm install -g yo
-
-# install JHipster
-npm install -g generator-jhipster@6.7.1
-
-# install JHipster UML
-npm install -g jhipster-uml@2.0.3
-
 ################################################################################
 # Install the graphical environment
 ################################################################################
 
 # force encoding
-echo 'LANG=en_US.UTF-8' >> /etc/environment
-echo 'LANGUAGE=en_US.UTF-8' >> /etc/environment
-echo 'LC_ALL=en_US.UTF-8' >> /etc/environment
-echo 'LC_CTYPE=en_US.UTF-8' >> /etc/environment
+#echo 'LANG=en_US.UTF-8' >> /etc/environment
+#echo 'LANGUAGE=en_US.UTF-8' >> /etc/environment
+#echo 'LC_ALL=en_US.UTF-8' >> /etc/environment
+#echo 'LC_CTYPE=en_US.UTF-8' >> /etc/environment
+
+
+echo 'LANG=fr_FR.UTF-8' >> /etc/environment
+echo 'LANGUAGE=fr_FR.UTF-8' >> /etc/environment
+echo 'LC_ALL=fr_FR.UTF-8' >> /etc/environment
+echo 'LC_CTYPE=fr_FR.UTF-8' >> /etc/environment
 
 # run GUI as non-privileged user
 echo 'allowed_users=anybody' > /etc/X11/Xwrapper.config
@@ -56,10 +54,11 @@ apt-get install -y xubuntu-desktop virtualbox-guest-dkms virtualbox-guest-utils 
 # remove light-locker (see https://github.com/jhipster/jhipster-devbox/issues/54)
 apt-get remove -y light-locker --purge
 
-# change the default wallpaper
+# Do not change the default wallpaper 
+# Customize with our own
 #wget https://jhipster.github.io/images/wallpaper-004-2560x1440.png -O /usr/share/xfce4/backdrops/jhipster-wallpaper.png
-wget https://raw.githubusercontent.com/jhipster/jhipster-devbox/master/images/jhipster-wallpaper.png -O /usr/share/xfce4/backdrops/jhipster-wallpaper.png
-sed -i -e 's/xubuntu-wallpaper.png/jhipster-wallpaper.png/' /etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+#wget https://raw.githubusercontent.com/jhipster/jhipster-devbox/master/images/jhipster-wallpaper.png -O /usr/share/xfce4/backdrops/jhipster-wallpaper.png
+#sed -i -e 's/xubuntu-wallpaper.png/jhipster-wallpaper.png/' /etc/xdg/xdg-xubuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
 
 ################################################################################
 # Install the development tools
@@ -85,8 +84,8 @@ apt-get install -y guake
 cp /usr/share/applications/guake.desktop /etc/xdg/autostart/
 
 # install jhipster-devbox
-git clone git://github.com/jhipster/jhipster-devbox.git /home/vagrant/jhipster-devbox
-chmod +x /home/vagrant/jhipster-devbox/tools/*.sh
+#git clone git://github.com/jhipster/jhipster-devbox.git /home/vagrant/jhipster-devbox
+#chmod +x /home/vagrant/jhipster-devbox/tools/*.sh
 
 # install zsh
 apt-get install -y zsh
@@ -98,12 +97,12 @@ chsh -s /bin/zsh vagrant
 echo 'SHELL=/bin/zsh' >> /etc/environment
 
 # install jhipster-oh-my-zsh-plugin
-git clone https://github.com/jhipster/jhipster-oh-my-zsh-plugin.git /home/vagrant/.oh-my-zsh/custom/plugins/jhipster
-sed -i -e "s/plugins=(git)/plugins=(git docker docker-compose jhipster)/g" /home/vagrant/.zshrc
-echo 'export PATH="$PATH:/usr/bin:/home/vagrant/.yarn-global/bin:/home/vagrant/.yarn/bin:/home/vagrant/.config/yarn/global/node_modules/.bin"' >> /home/vagrant/.zshrc
+#git clone https://github.com/jhipster/jhipster-oh-my-zsh-plugin.git /home/vagrant/.oh-my-zsh/custom/plugins/jhipster
+#sed -i -e "s/plugins=(git)/plugins=(git docker docker-compose jhipster)/g" /home/vagrant/.zshrc
+#echo 'export PATH="$PATH:/usr/bin:/home/vagrant/.yarn-global/bin:/home/vagrant/.yarn/bin:/home/vagrant/.config/yarn/global/node_modules/.bin"' >> /home/vagrant/.zshrc
 
 # change user to vagrant
-chown -R vagrant:vagrant /home/vagrant/.zshrc /home/vagrant/.oh-my-zsh
+#chown -R vagrant:vagrant /home/vagrant/.zshrc /home/vagrant/.oh-my-zsh
 
 # install Visual Studio Code
 su -c 'umake ide visual-studio-code /home/vagrant/.local/share/umake/ide/visual-studio-code --accept-license' vagrant
@@ -140,3 +139,36 @@ apt-get -y clean
 apt-get -y autoremove
 dd if=/dev/zero of=/EMPTY bs=1M > /dev/null 2>&1
 rm -f /EMPTY
+
+
+
+echo "Install  SDK for JVM microservice like quarkus,micronaut,thorntail"
+echo "Install  Nginx "
+echo "Install  Nginx "
+echo "Install  Sonar"
+echo "Install  CouchDB"
+echo "Install  Eureka"
+
+
+echo "Install  Elasticsearch"
+echo "Install  Logstash"
+echo "Install  Kibana"
+echo "Install  Kafka"
+
+
+
+
+echo "Install  RabbitMQ"
+echo "Install  ActiveMQ"
+echo "Install  Gitlab"
+echo "Install  Graphana"
+
+echo "Install  Wildfly"
+echo "Install  Prometheus"
+echo "Install  Gitlab"
+echo "Install  Graphana"
+
+
+
+
+
