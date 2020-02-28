@@ -74,13 +74,24 @@ apt-get install -y ubuntu-make
 # install Chromium Browser
 apt-get install -y chromium-browser
 
+# install MySQL Workbench
+apt-get install -y mysql-workbench
 
+# install PgAdmin
+apt-get install -y pgadmin3
 
+# install Heroku toolbelt
+wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh
 
 # install Guake
 apt-get install -y guake
 cp /usr/share/applications/guake.desktop /etc/xdg/autostart/
 
+# install jhipster-devbox
+#git clone git://github.com/jhipster/jhipster-devbox.git /home/vagrant/jhipster-devbox
+#chmod +x /home/vagrant/jhipster-devbox/tools/*.sh
+
+# install zsh
 apt-get install -y zsh
 
 # install oh-my-zsh
@@ -89,7 +100,25 @@ cp /home/vagrant/.oh-my-zsh/templates/zshrc.zsh-template /home/vagrant/.zshrc
 chsh -s /bin/zsh vagrant
 echo 'SHELL=/bin/zsh' >> /etc/environment
 
+# install jhipster-oh-my-zsh-plugin
+#git clone https://github.com/jhipster/jhipster-oh-my-zsh-plugin.git /home/vagrant/.oh-my-zsh/custom/plugins/jhipster
+#sed -i -e "s/plugins=(git)/plugins=(git docker docker-compose jhipster)/g" /home/vagrant/.zshrc
+#echo 'export PATH="$PATH:/usr/bin:/home/vagrant/.yarn-global/bin:/home/vagrant/.yarn/bin:/home/vagrant/.config/yarn/global/node_modules/.bin"' >> /home/vagrant/.zshrc
 
+# change user to vagrant
+#chown -R vagrant:vagrant /home/vagrant/.zshrc /home/vagrant/.oh-my-zsh
+
+# install Visual Studio Code
+su -c 'umake ide visual-studio-code /home/vagrant/.local/share/umake/ide/visual-studio-code --accept-license' vagrant
+
+# fix links (see https://github.com/ubuntu/ubuntu-make/issues/343)
+sed -i -e 's/visual-studio-code\/code/visual-studio-code\/bin\/code/' /home/vagrant/.local/share/applications/visual-studio-code.desktop
+
+# disable GPU (see https://code.visualstudio.com/docs/supporting/faq#_vs-code-main-window-is-blank)
+sed -i -e 's/"$CLI" "$@"/"$CLI" "--disable-gpu" "$@"/' /home/vagrant/.local/share/umake/ide/visual-studio-code/bin/code
+
+#install IDEA community edition
+su -c 'umake ide idea /home/vagrant/.local/share/umake/ide/idea' vagrant
 
 # increase Inotify limit (see https://confluence.jetbrains.com/display/IDEADEV/Inotify+Watches+Limit)
 echo "fs.inotify.max_user_watches = 524288" > /etc/sysctl.d/60-inotify.conf
@@ -114,15 +143,127 @@ apt-get -y clean
 apt-get -y autoremove
 dd if=/dev/zero of=/EMPTY bs=1M > /dev/null 2>&1
 rm -f /EMPTY
+
+# install Eclipse Kepler 4.3.1 Java EE 
+echo "Install  Eclipse"
+
+if [ ! -d /vagrant/resources ]
+then
+  mkdir -p /vagrant/resources
+fi
+
+
+if [ ! -f /vagrant/resources/eclipse-jee-2019-12-R-linux-gtk-x86_64.tar.gz ]
+then
+  cd /vagrant/resources
+  pwd 
+  echo Downloading Eclipse...
+  wget -q https://eclipse.bluemix.net/packages/2019-12/data/eclipse-jee-2019-12-R-linux-gtk-x86_64.tar.gz
+  cd /home/vagrant
+fi
+
+
+sudo tar xzf /vagrant/resources/eclipse-jee-2019-12-R-linux-gtk-x86_64.tar.gz -C /opt --owner=root
+
+cat <<DESKTOP | sudo tee /usr/share/applications/eclipse.desktop
+[Desktop Entry]
+Version=4.3.1
+Name=Eclipse for Java EE Developers
+Comment=IDE for all seasons
+Exec=env UBUNTU_MENUPROXY=0 /opt/eclipse/eclipse
+Icon=/opt/eclipse/icon.xpm
+Terminal=false
+Type=Application
+Categories=Utility;Application;Development;IDE
+DESKTOP
+
+
+mkdir -p /home/vagrant/workspace
+chown -R vagrant:vagrant /home/vagrant/workspace
+
+if [ ! -f mkdir -p /home/vagrant/.eclipse/org.eclipse.platform_4.3.0_1473617060_linux_gtk_x86_64/configuration/.settings/ ]
+then
+
+	mkdir -p /home/vagrant/.eclipse/org.eclipse.platform_4.3.0_1473617060_linux_gtk_x86_64/configuration/.settings/
+fi	
+
+chown -R vagrant:vagrant  /home/vagrant/.eclipse/org.eclipse.platform_4.3.0_1473617060_linux_gtk_x86_64/configuration/.settings/
+chown -R vagrant:vagrant  /home/vagrant/.eclipse/org.eclipse.platform_4.3.0_1473617060_linux_gtk_x86_64/configuration/.settings/org.eclipse.ui.ide.prefs
+cat <<PREFS | tee /home/vagrant/.eclipse/org.eclipse.platform_4.3.0_1473617060_linux_gtk_x86_64/configuration/.settings/org.eclipse.ui.ide.prefs 
+MAX_RECENT_WORKSPACES=5
+RECENT_WORKSPACES=/home/vagrant/workspace
+RECENT_WORKSPACES_PROTOCOL=3
+SHOW_WORKSPACE_SELECTION_DIALOG=false
+eclipse.preferences.version=1
+PREFS
+
+
 echo "Install  SDK for JVM microservice like quarkus,micronaut,thorntail"
+echo "Install  Nginx "
+echo "Pull latest Nginx"
+sudo docker pull nginx
+echo "......;"
+
+echo "Redirection of 8080 to 80 latest Nginx"
+sudo docker run –p 8080:80 –d nginx
+echo "......"
+
+
 echo "Install  Sonar"
+echo "Install  CouchDB"
+
+echo "deb https://apache.bintray.com/couchdb-deb bionic main" | sudo tee -a /etc/apt/sources.list
+curl -L https://couchdb.apache.org/repo/bintray-pubkey.asc | sudo apt-key add -
+sudo apt-get update -y && sudo apt-get install couchdb -y 
+
+sudo systemctl start couchdb
+sudo systemctl enable couchdb
+sudo systemctl status couchdb
+
+echo "... end of installing couchDB"
 echo "Install  Eureka"
+
+
+echo "Install  Elasticsearch"
+echo "Install  Logstash"
 echo "Install  Kibana"
+
+echo "Install  Kafka"
+if [ ! -f kafka_2.12-2.2.1.tgz ]
+then
+  echo Downloading Kafka...
+  wget http://www-us.apache.org/dist/kafka/2.2.1/kafka_2.12-2.2.1.tgz
+  sudo tar xzf kafka_2.12-2.2.1.tgz
+  sudo mv kafka_2.12-2.2.1 /usr/local/kafka
+
+  cd /usr/local/kafka
+  sh bin/zookeeper-server-start.sh config/zookeeper.properties &
+fi
+
+
+
+echo "... end of kafka"
+
+
+echo "Install  Redis"
+#sudo apt update
+#sudo apt install redis-server
+#sudo systemctl restart redis.service
+#echo "TODO : replace"
+
+cd /opt
+wget http://download.redis.io/redis-stable.tar.gz
+tar xvzf redis-stable.tar.gz
+cd redis-stable
+echo "Building with MAKE"
+make
+echo "... end of installing redis"
 
 
 echo "Install  RabbitMQ"
 
 echo "Install  ActiveMQ"
+
 cd /opt
 wget http://archive.apache.org/dist/activemq/5.15.8/apache-activemq-5.15.8-bin.tar.gz
 tar -xvzf apache-activemq-5.15.8-bin.tar.gz
@@ -152,3 +293,14 @@ echo "Install  Prometheus"
 echo "Install  Gitlab"
 echo "Install  Graphana"	
 
+echo "Install Solr"
+cd /opt
+wget https://archive.apache.org/dist/lucene/solr/8.3.1/solr-8.3.1.tgz && tar xzf solr-8.3.1.tgz solr-8.3.1/bin/install_solr_service.sh --strip-components=2
+
+sudo bash ./install_solr_service.sh solr-8.3.1.tgz
+
+sudo service solr stop
+sudo service solr start
+sudo service solr status
+
+echo ".... end  of installing Solr"
