@@ -91,14 +91,21 @@ apt-get -y clean
 apt-get -y autoremove
 dd if=/dev/zero of=/EMPTY bs=1M > /dev/null 2>&1
 rm -f /EMPTY
+
+echo "Install Emacs"
+yes | sudo apt-get install emacs
+
 echo "Install GCC or C Language"
-sudo apt install gcc gcc-8 g++-8
+yes | sudo apt install gcc gcc-8 g++-8
+
 echo "Install  Bison "
-yes | sudo apt-get update -y
+sudo apt-get update -y
 yes | sudo apt-get install -y bison
+
 echo "Install  Lex  "
 sudo apt-get update
-sudo apt-get install flex
+yes | sudo apt-get install -y flex
+
 echo "Install  Latex "
 sudo add-apt-repository ppa:jonathonf/texlive
 sudo apt update 
@@ -106,18 +113,15 @@ sudo apt purge libkpathsea6
 yes | sudo apt install -y --force-yes texlive-full
 yes | sudo apt-get install -y --force-yes texlive-latex-extra
 sudo apt update 
-
 yes | apt-get -y --force-yes install texworks
 
 echo "Install  Tcl/Tk "
-
 sudo apt-get update
-sudo apt-get install tcl
-
+yes |  sudo apt-get install -y tcl8.5
 sudo apt-get update
-sudo apt-get install tk
+yes | sudo apt-get install -y tk8.6
 
 echo "Install Groff"
-sudo apt-get install -y groff
+yes |  sudo apt-get install -y groff
 
 
