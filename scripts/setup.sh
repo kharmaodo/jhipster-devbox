@@ -158,7 +158,7 @@ then
   cd /vagrant/resources
   pwd 
   echo Downloading Eclipse...
-   wget -q https://eclipse.bluemix.net/packages/2019-12/data/eclipse-jee-2019-12-R-linux-gtk-x86_64.tar.gz
+  wget -q https://eclipse.bluemix.net/packages/2019-12/data/eclipse-jee-2019-12-R-linux-gtk-x86_64.tar.gz
   cd /home/vagrant
 fi
 
@@ -206,24 +206,19 @@ echo "......;"
 
 echo "Redirection of 8080 to 80 latest Nginx"
 sudo docker run –p 8080:80 –d nginx
-echo "......;"
+echo "......"
 
 
 echo "Install  Sonar"
 echo "Install  CouchDB"
 
 echo "deb https://apache.bintray.com/couchdb-deb bionic main" | sudo tee -a /etc/apt/sources.list
-
-
-
 curl -L https://couchdb.apache.org/repo/bintray-pubkey.asc | sudo apt-key add -
 sudo apt-get update -y && sudo apt-get install couchdb -y 
 
 sudo systemctl start couchdb
 sudo systemctl enable couchdb
-
 sudo systemctl status couchdb
-
 
 echo "... end of installing couchDB"
 echo "Install  Eureka"
@@ -234,18 +229,35 @@ echo "Install  Logstash"
 echo "Install  Kibana"
 
 echo "Install  Kafka"
-wget http://www-us.apache.org/dist/kafka/2.2.1/kafka_2.12-2.2.1.tgz
-sudo tar xzf kafka_2.12-2.2.1.tgz
-sudo mv kafka_2.12-2.2.1 /usr/local/kafka
+if [ ! -f kafka_2.12-2.2.1.tgz ]
+then
+  echo Downloading Kafka...
+  wget http://www-us.apache.org/dist/kafka/2.2.1/kafka_2.12-2.2.1.tgz
+  sudo tar xzf kafka_2.12-2.2.1.tgz
+  sudo mv kafka_2.12-2.2.1 /usr/local/kafka
 
-cd /usr/local/kafka
-sh bin/zookeeper-server-start.sh config/zookeeper.properties &
+  cd /usr/local/kafka
+  sh bin/zookeeper-server-start.sh config/zookeeper.properties &
+fi
+
 
 
 echo "... end of kafka"
 
 
+echo "Install  Redis"
+#sudo apt update
+#sudo apt install redis-server
+#sudo systemctl restart redis.service
+#echo "TODO : replace"
 
+cd /opt
+wget http://download.redis.io/redis-stable.tar.gz
+tar xvzf redis-stable.tar.gz
+cd redis-stable
+echo "Building with MAKE"
+make
+echo "... end of installing redis"
 
 
 echo "Install  RabbitMQ"
@@ -292,6 +304,3 @@ sudo service solr start
 sudo service solr status
 
 echo ".... end  of installing Solr"
-
-
-
