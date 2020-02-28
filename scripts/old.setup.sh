@@ -270,7 +270,7 @@ tar -xvzf apache-activemq-5.15.8-bin.tar.gz
 sudo mv apache-activemq-5.15.8 /opt/activemq
 sudo addgroup --quiet --system activemq
 sudo adduser --quiet --system --ingroup activemq --no-create-home --disabled-password activemq
-sudocchown -R activemq:activemq /opt/activemq
+sudo chown -R activemq:activemq /opt/activemq
 sudo cp activemq.service /etc/systemd/system/activemq.service
 sudo systemctl daemon-reload
 sudo systemctl start activemq
