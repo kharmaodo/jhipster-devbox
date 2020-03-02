@@ -1,5 +1,19 @@
 #!/bin/sh
 
+
+echo 'Update packages list...'
+echo "------------------------"
+apt-get -y update
+
+echo 'Install Xubuntu Desktop & co...'
+echo "------------------------"
+
+# update the system
+export DEBIAN_FRONTEND=noninteractive
+apt-get -y --force-yes --no-install-recommends install xubuntu-desktop mousepad xubuntu-icon-theme \
+xfce4-goodies xubuntu-wallpapers gksu firefox cifs-utils xfce4-whiskermenu-plugin \
+xarchiver filezilla
+
 # switch to French keyboard layout
 sudo sed -i 's/"us"/"fr"/g' /etc/default/keyboard
 
@@ -7,8 +21,7 @@ sudo sed -i 's/"us"/"fr"/g' /etc/default/keyboard
 
 sudo loadkeys fr
 
-# update the system
-export DEBIAN_FRONTEND=noninteractive
+
 apt-mark hold keyboard-configuration
 apt-get update
 apt-get -y upgrade
@@ -92,40 +105,29 @@ apt-get -y autoremove
 dd if=/dev/zero of=/EMPTY bs=1M > /dev/null 2>&1
 rm -f /EMPTY
 
-echo "Install Emacs"
-yes | sudo apt-get install emacs
 
-echo "Install GCC or C Language"
-yes | sudo apt install gcc gcc-8 g++-8
 
-echo "Install  Bison "
+
+echo 'Install JDK 7 in /usr/lib/jvm/java-7-oracle...'
+echo "------------------------"
+sudo add-apt-repository ppa:webupd8team/java -y
 sudo apt-get update -y
-yes | sudo apt-get install -y bison
-
-echo "Install  Lex  "
-sudo apt-get update
-yes | sudo apt-get install -y flex
-
-echo "Install  Latex "
-sudo add-apt-repository ppa:jonathonf/texlive
-sudo apt update 
-sudo apt purge libkpathsea6
-yes | sudo apt install -y --force-yes texlive-full
-yes | sudo apt-get install -y --force-yes texlive-latex-extra
-sudo apt update 
-yes | apt-get -y --force-yes install texworks
+sudo echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+sudo echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
+sudo apt-get update 
+yes | sudo  apt-get install default-jdk
 
 
-echo "Install PDF viewer"
-yes |  sudo apt-get install -y evince
+echo 'Create development directory...'
+echo "------------------------"
+mkdir /home/vagrant/Development
+sudo chmod 777 /home/vagrant/Development/ -R
 
-echo "Install  Tcl/Tk "
-sudo apt-get update
-yes |  sudo apt-get install -y tcl8.5
-sudo apt-get update
-yes | sudo apt-get install -y tk8.6
-
-echo "Install Groff"
-yes |  sudo apt-get install -y groff
-
-
+# open shell and write 'eclipse' to launch it
+echo 'Install ADT Bundle 22...'
+echo "------------------------"
+wget http://dl.google.com/android/adt/22.6.2/adt-bundle-linux-x86-20140321.zip -P /tmp
+unzip /tmp/adt-bundle-linux-x86-20140321.zip -d /home/vagrant/Development/
+sudo ln -s /home/vagrant/Development/adt-bundle-linux-x86-20140321/eclipse/eclipse /usr/bin/eclipse
+wget -N https://raw.githubusercontent.com/fabioCollini/vagrant/master/settings/xubuntu/adt.desktop -P /tmp
+sudo mv /tmp/adt.desktop /usr/share/applications/
