@@ -123,9 +123,9 @@ echo "Install  Kibana"
 echo "Install  RabbitMQ"
 
 echo "Install  ActiveMQ"
-cd /opt
-if [ ! -f apache-activemq-5.15.8-bin.tar.gz]
-then
+
+
+  cd /opt
   echo Downloading ActiveMQ...
   wget http://archive.apache.org/dist/activemq/5.15.8/apache-activemq-5.15.8-bin.tar.gz
 tar -xvzf apache-activemq-5.15.8-bin.tar.gz
@@ -134,11 +134,11 @@ sudo addgroup --quiet --system activemq
 sudo adduser --quiet --system --ingroup activemq --no-create-home --disabled-password activemq
 sudo chown -R activemq:activemq /opt/activemq
 
-fi
 
-touch activemq.service
 
-cat <<ActiveMQSERVICE | sudo tee activemq.service
+sudo touch /opt/activemq.service
+
+cat <<ActiveMQSERVICE | sudo tee /opt/activemq.service
 [Unit]
 Description=Apache ActiveMQ
 After=network.target
@@ -155,17 +155,22 @@ ExecStop=/opt/activemq/bin/activemq stop
 [Install]
 ActiveMQSERVICE
 
-sudo cp activemq.service /etc/systemd/system/activemq.service
+sudo cp /opt/activemq.service /etc/systemd/system/activemq.service
+
+sudo sh /opt/activemq/bin/activemq stop
+sudo sh /opt/activemq/bin/activemq start
+sudo sh /opt/activemq/bin/activemq status
 sudo systemctl daemon-reload
 sudo systemctl start activemq
 sudo systemctl enable activemq
 
-sh /opt/activemq/bin/activemq status
-
+sudo sh /opt/activemq/bin/activemq stop
+sudo sh /opt/activemq/bin/activemq ExecStart
+sudo sh /opt/activemq/bin/activemq status
 sudo systemctl restart activemq
 ps aux | grep activemq
 
-netstat -naptu | grep 61616
+netstat -naptu | grep 8161
  echo Downloading ActiveMQ...
 
 echo "To be done for Monitor ActiveMQ With Hawt.io"
